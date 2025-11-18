@@ -1,0 +1,17 @@
+[project]
+name = "lowrank-transformer"
+version = "0.1.0"
+description = "Low-rank Transformer models and layers in PyTorch"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+
+authors = [
+  { name = "Xin Qi Liu", email = "liux3@mit.edu" }
+]
+
+dependencies = [
+  "torch>=2.6.0",
+  "transformer>=4.51.2",
+  "numpy>=2.0.0"
+]
