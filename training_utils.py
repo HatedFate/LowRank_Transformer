@@ -21,7 +21,7 @@ class TrainingMetrics:
         return np.mean(self.losses[-last_n:])
     
 
-def get_lr_scheduler(self, optimizer, warmup_steps: int, total_steps: int):
+def get_lr_scheduler(optimizer, warmup_steps: int, total_steps: int):
     """Get learning rate scheduler with warmup"""
     def lr_lambda(current_step):
         if current_step < warmup_steps:
