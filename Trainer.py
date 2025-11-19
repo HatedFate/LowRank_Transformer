@@ -5,12 +5,12 @@ import os
 
 from tqdm import tqdm
 
-from .src.config.TrainingConfig import TrainingConfig
-from .src.utils.save_model import save_model
+from src.config.TrainingConfig import TrainingConfig
+from src.utils.save_model import save_model
 
-from .training_utils import get_lr_scheduler
-from .training_utils import evaluate_model
-from .training_utils import TrainingMetrics
+from training_utils import get_lr_scheduler
+from training_utils import evaluate_model
+from training_utils import TrainingMetrics
 
 
 class Trainer:
