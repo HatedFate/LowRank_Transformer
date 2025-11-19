@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from typing import Tuple, Optional
 
-from LowRankLinear import LowRankLinear
+from .LowRankLinear import LowRankLinear
 
 """
 Contains the class implementation of Low Rank Multi-Headed Attention

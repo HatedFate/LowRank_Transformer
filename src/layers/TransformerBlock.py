@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 
 from typing import Optional
-from RMSNorm import RMSNorm
-from FeedForward import FeedForward
-from LowRankMultiHeadAttention import LowRankMultiHeadAttention
+from .RMSNorm import RMSNorm
+from .FeedForward import FeedForward
+from .LowRankMultiHeadAttention import LowRankMultiHeadAttention
 
 class TransformerBlock(nn.Module):
 

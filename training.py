@@ -1,14 +1,14 @@
 import datasets
 
 from transformers import AutoTokenizer
-from training_utils import count_parameters
-from Trainer import Trainer
+from .training_utils import count_parameters
+from .Trainer import Trainer
 
-from src.CausalLanguageModel import CausalLanguageModel
-from src.config.TrainingConfig import TrainingConfig
-from src.config.TransformerConfig import TransformerConfig
+from .src.CausalLanguageModel import CausalLanguageModel
+from .src.config.TrainingConfig import TrainingConfig
+from .src.config.TransformerConfig import TransformerConfig
 
-from dataset.TinyStoriesDataset import TinyStoriesDataset
+from .dataset.TinyStoriesDataset import TinyStoriesDataset
 
 
 def main():

@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from Transformer import TransformerModel
+from .Transformer import TransformerModel
 
 from typing import Optional, Union, Tuple
 from config.TrainingConfig import TransformerConfig

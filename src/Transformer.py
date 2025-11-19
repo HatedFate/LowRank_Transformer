@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 from typing import Optional
-from config.TransformerConfig import TransformerConfig
-from layers.RMSNorm import RMSNorm
-from layers.TransformerBlock import TransformerBlock
-from utils.create_causal_mask import create_causal_mask
+from .config.TransformerConfig import TransformerConfig
+from .layers.RMSNorm import RMSNorm
+from .layers.TransformerBlock import TransformerBlock
+from .utils.create_causal_mask import create_causal_mask
 
 
 class TransformerModel(nn.Module):
