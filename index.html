@@ -388,36 +388,44 @@
           model compression, and on-device inference to make deployment on resource-constrained devices more 
           feasible [5].
         </p>
+        <p>
+          These challenges have motivated extensive work on optimizing Transformer models to reduce model size and 
+          inference latency. Over the past 3 - 5 years, many techniques have been proposed and adopted, but most notably,
+          quantization has emerged as one of the most practical and widely used approaches for compressing models and 
+          accelerating inference, especially on hardware with efficient low-precision support. The core idea of 
+          quantization is to represent model parameters (and sometimes activations) with lower numerical precision. 
+          Instead of storing all weights in 32-bit floating-point format, recent methods use 8-bit and even 4-bit
+          representations. In the ideal case, moving from 32-bit to 8-bit parameters reduces parameter storage by 75%,
+          and moving to 4-bit reduces it by 87.5%, assuming all eligible weights are quantized. This substantially 
+          lowers the memory footprint and, when low-precision operations are well supported by the hardware, can also 
+          significantly reduce inference time.
+        </p>
 
+        <p>
+          This article investigates an alternative axis of model compression that targets the attention mechanism itself,
+          by factorizing the attention projection matrices into a product of two low-rank matrices. Most prior work on
+          compressing Transformers, including pruning and the quantization techniques discussed above, has focused
+          primarily on reducing the size of the Feed Forward Networks (FFNs) which is often the largest component of 
+          modern day transformers. In contrast, applying aggressive pruning or low-precision quantization to multi-head 
+          attention (MHA) can directly affect the model's outputs [6, 7]. In practice, attention projections are often more 
+          sensitive to changes in structure or numerical precision, so naively pruning or quantizing these components 
+          can lead to a significant drop in quality [7]. Our proposed FAP method reduces the number of trainable parameters
+          in the attention layers by replacing full-rank projections with low-rank factorizations, with the goal of 
+          reducing parameters while maintaining model quality in our experiments.
+        </p>
       </section>
 
       <!-- Background -->
-      <section id="background">
-        <h2>2. Background and Related Work</h2>
+      <section id="#Related-Works">
+        <h2> 2. Related Work </h2>
 
-        <h3 id="background-concepts">2.1 Key concepts</h3>
-        <p>
-          Briefly define the main objects you will talk about (e.g., representations, loss landscapes,
-          scaling laws). Keep each definition in its own short paragraph, and link out to standard
-          references when appropriate.
-        </p>
-
-        <h3 id="related-work">2.2 Related work</h3>
-        <p>
-          Summarize prior work at a high level. Group papers by idea (“Neural tangent kernel analyses”,
-          “Scaling law characterizations”, “Mechanistic interpretability”) rather than listing them one by one.
-        </p>
-
-        <p>
-          Example structure:
-          “A line of work studies X [1,2]. Another line of work analyzes Y [3,4]. Our perspective differs
-          from both in that we focus on Z, which lets us unify A and B under a single framework.”
-        </p>
+        <h3>2.1 Quanitzation</h3>
+        <h3>2.2 Low Rank Approximation (LoRA)</h3>
       </section>
 
       <!-- Methods / Main Idea -->
       <section id="methods">
-        <h2>3. Main Idea / Framework</h2>
+        <h2>3. Methodology </h2>
 
         <h3 id="setup">3.1 Setup</h3>
         <p>
@@ -557,10 +565,10 @@ def toy_update(z, grad, lr=0.1):
         <ul>
           <li><a href="#abstract">Abstract</a></li>
           <li><a href="#introduction">1. Introduction</a></li>
-          <li><a href="#background">2. Background &amp; Related Work</a>
+          <li><a href="#Related-Works">2. Related Works</a>
             <ul class="toc-sub">
-              <li><a href="#background-concepts">2.1 Concepts</a></li>
-              <li><a href="#related-work">2.2 Related work</a></li>
+              <li><a href="#Quantization">2.1 Quantization</a></li>
+              <li><a href="#Low-Rank-Approximation">2.2 Low Rank Approximation (LoRA)</a></li>
             </ul>
           </li>
           <li><a href="#methods">3. Main Idea / Framework</a>
