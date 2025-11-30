@@ -416,10 +416,36 @@
       </section>
 
       <!-- Background -->
-      <section id="#Related-Works">
-        <h2> 2. Related Work </h2>
+      <section id="Background">
+        <h2> 2. Background </h2>
 
         <h3>2.1 Quanitzation</h3>
+        <p>
+          Quantization has become one of the most widely used methods for model compression because 
+          it can substantially reduce memory and compute while often preserving model quality. Many practical 
+          schemes primarily target lowering the precision of model parameters (particularly with FFNs), with 
+          activations initially kept in higher precision. Most recent works on quantization methods can be categorized
+          into two groups: Quantization-Aware Training (QAT) and Post-Training Quantization (PTQ) [7]. In QAT,
+          the model is trained or fine-tuned while using low-precision parameters (e.g. 8-bits floating point),
+          so that the optimization can compensate for quantization error. LLM-QAT is a representative example 
+          that quantizes weights, activations, and even the KV cache, and then performs data-free distillation
+          from the original model to counteract model degradation [8]. However, QAT typically requires substantial 
+          compute and memory, which makes it difficult to apply to very large models in practice.
+        </p>
+
+        <p>
+          On the other hand, PTQ starts from a fully trained model and quantizes it after training without fine-tuning 
+          at all. Typical PTQ pipelines gather a small calibration set, estimate statistics of weights and activations, 
+          and then choose quantization scales and zero-points (e.g. channel-wise or group-wise) to minimize some error 
+          metric. For LLMs, many PTQ methods focus on weight-only quantization to 8-bits, 4-bits, or even 3-bits and can 
+          often be applied with no additional training. Examples include ZeroQuant, which introduces efficient PTQ for
+          large Transformer models [9]. Additionally, GPTQ and other related methods use approximate second-order 
+          information to achieve accurate 3-bit to 4-bit weight-only quantization [10]. SmoothQuant, which enables 8-bit
+          weights and activations for many LLM architectures via an activation-smoothing transformation [11]. Compared
+          to QAT, PTQ is often easier and cheaper to deploy and is therefore the most common choice in real systems, 
+          although its accuracy can degrade at extremely low bit-widths or under strong hardware constraints. 
+        </p>
+
         <h3>2.2 Low Rank Approximation (LoRA)</h3>
       </section>
 
