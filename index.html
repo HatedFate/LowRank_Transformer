@@ -27,7 +27,7 @@
       --text-main: #111827;
       --text-muted: #6b7280;
       --code-bg: #f3f4f6;
-      --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-body: "Times New Roman", Times, serif;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --radius-lg: 12px;
       --shadow-soft: 0 14px 25px rgba(15, 23, 42, 0.08);
@@ -473,11 +473,12 @@
         </div>
 
         <p>
-          In particular, we set <i>&Delta;W</i> = <i>A</i><i>B</i>, where <i>A</i> &in;
+          Here, <i>W<sub>0</sub></i> denotes the weight of the base model, and the final updated matrix is <i>h</i>. 
+          Additionally, we have the update matrix denoted as <i>&Delta;W</i>. In particular, we set <i>&Delta;W</i> = <i>A</i><i>B</i>, where <i>A</i> &in;
           &#8477;<sup><i>d</i><sub><i>out</i></sub> &times; <i>r</i></sup> and <i>B</i> &in; &#8477;<sup><i>r</i>
           &times; <i>d</i><sub><i>in</i></sub></sup>. These LoRA layers are inserted across the model in every transformer 
-          block to approximate the necessary gradient updates for fine-tuning without having to update all of the 
-          original weights. The final updated matrix is <i>h</i> as per equation 1.
+          block to approximate the necessary gradient updates for fine-tuning without having to update the parameters of the
+          base model. 
         </p>
 
         <p>
