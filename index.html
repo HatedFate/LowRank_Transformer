@@ -400,7 +400,8 @@
           lowers the memory footprint and, when low-precision operations are well supported by the hardware, can also 
           significantly reduce inference time.
         </p>
-
+      <section id="motivation">
+        <h2>2. Motivation</h2>
         <p>
           This article investigates an alternative axis of model compression that targets the attention mechanism itself,
           by factorizing the attention projection matrices into a product of two low-rank matrices. Most prior work on
@@ -417,9 +418,9 @@
 
       <!-- Background -->
       <section id="Background">
-        <h2> 2. Background </h2>
+        <h2> 3. Background </h2>
 
-        <h3>2.1 Quanitzation</h3>
+        <h3>3.1 Quanitzation</h3>
         <p>
           Quantization has become one of the most widely used methods for model compression because 
           it can substantially reduce memory and compute while often preserving model quality. Many practical 
@@ -446,7 +447,7 @@
           although its accuracy can degrade at extremely low bit-widths or under strong hardware constraints. 
         </p>
 
-        <h3>2.2 Low-Rank Approximation</h3>
+        <h3>3.2 Low-Rank Approximation</h3>
         <p>
           Training pipelines of Modern LLMs include large-scale pretraining on general-domain data before undergoing 
           adaptation to a particular task. However, recent models such as GPT, Gemini, and Claude use very large 
@@ -465,7 +466,7 @@
 
         <div style="position: relative; margin: 1em 0; font-family: 'Times New Roman', Times, serif; font-size: 1.5em;">
           <p style="text-align: center; font-style: italic; margin: 0;">
-            h = W<sub>0</sub> + &Delta;W
+            h = W<sub><span style="font-style: normal;">0</span></sub> + <span style="font-style: normal;">&Delta;</span>W
           </p>
           <span style="position: absolute; right: 0; top: 0; font-style: normal;">
             (1)
@@ -473,8 +474,9 @@
         </div>
 
         <p>
-          Here, <i>W<sub>0</sub></i> denotes the weight of the base model, and the final updated matrix is <i>h</i>. 
-          Additionally, we have the update matrix denoted as <i>&Delta;W</i>. In particular, we set <i>&Delta;W</i> = <i>A</i><i>B</i>, where <i>A</i> &in;
+          Here, <i>W<sub><span style="font-style: normal;">0</span></sub></i> denotes the weight of the base model, and the final updated matrix is <i>h</i>. 
+          Additionally, we have the update matrix denoted as <span style="font-style: normal;">&Delta;</span><i>W</i>. In particular,
+          we set <span style="font-style: normal;">&Delta;</span><i>W</i> = <i>A</i><i>B</i>, where <i>A</i> &in;
           &#8477;<sup><i>d</i><sub><i>out</i></sub> &times; <i>r</i></sup> and <i>B</i> &in; &#8477;<sup><i>r</i>
           &times; <i>d</i><sub><i>in</i></sub></sup>. These LoRA layers are inserted across the model in every transformer 
           block to approximate the necessary gradient updates for fine-tuning without having to update the parameters of the
@@ -495,50 +497,67 @@
 
       <!-- Methods / Main Idea -->
       <section id="methods">
-        <h2>3. Methodology </h2>
-
-        <h3 id="setup">3.1 Setup</h3>
+        <h2>4. Methodology </h2>
         <p>
-          Describe the objects and notation you will use. Keep it concrete:
-          “We consider a model $f_\\theta: \\mathbb{R}^d \\to \\mathbb{R}^k$ trained on data
-          $(x_i, y_i)$ with loss $L(\\theta)$…” (this will render if MathJax is enabled).
+          In this section we describe <b>FAP</b>, a simple architectural modification that 
+          replaces the standard full-rank query, key, and value projection matrices with low-rank
+          factorizations.
         </p>
 
-        <div class="callout">
-          <strong>Tip for yourself:</strong> keep notation lightweight; blog readers tolerate less notation
-          than formal papers.
+        <h3>4.1 Low-Rank Projections</h3>
+
+        <p>
+          In standard transformers, the queries, keys, and values projection are defined as follows:
+        </p>
+          <div style="position: relative; margin: 1em 0; font-family: 'Times New Roman', Times, serif; font-size: 1.5em;">
+            <p style="text-align: center; font-style: italic; margin: 0;">
+              Q = X W<sub>Q</sub><br>
+              K = X W<sub>K</sub><br>
+              V = X W<sub>V</sub>
+            </p>
+            <span style="position: absolute; right: 0; top: 0; font-style: normal;">
+              (2)
+            </span>
+          </div>
+
+        <p>
+          Generally, the projection matrices <i>W<sub>Q</sub></i>, <i>W<sub>K</sub></i>, and <i>W<sub>V</sub></i> are in 
+          &#8477;<sup><i>d</i><sub>model</sub> &times; <i>d<sub>k</sub></i></sup>. 
+          The core assumption of FAP is that all information required by the attention mechanism lies in a low-rank subspace. 
+          We therefore introduce a hyperparameter <i>r</i> (the rank), such that:
+        </p>
+
+        <div>
+          <p style="text-align: center; font-style: italic; margin: 1.0em 1; font-size: 1.5em;">
+            W<sub>Q</sub> = A<sub>Q</sub>B<sub>Q</sub>,&nbsp;
+            W<sub>K</sub> = A<sub>K</sub>B<sub>K</sub>,&nbsp;
+            W<sub>V</sub> = A<sub>V</sub>B<sub>V</sub>
+          </p>
+            <span style="position: absolute; right: 0; top: 0; font-style: normal;">
+              (3)
+            </span>
         </div>
-
-        <h3 id="core-idea">3.2 Core idea</h3>
         <p>
-          Explain the central claim or construction in plain language first. Imagine explaining it to a
-          smart colleague from an adjacent field. Only after that, add formulas or diagrams.
+          where <i>A</i> &in; &#8477;<sup><i>d</i><sub>model</sub>&times;<i>r</i></sup> and 
+          <i>B</i> &in; &#8477;<sup><i>r</i>&times;<i>d</i><sub>k</sub></sup>. 
+          Consequently, this low-rank assumption imposes an inherent limitation on the choice of <i>r</i>, 
+          which must satisfy <i>r</i> &le; min(<i>d</i><sub>model</sub>, <i>d</i><sub>k</sub>). If <i>r</i> is greater than
+          <i>d</i><sub>model</sub> or  <i>d</i><sub>k</sub>, then the model is overdetermined, and it will completely delete
+          the purpose of using FAP to reduce trainable parameters.
         </p>
 
+        <h3 id="core-idea">3.2 Models</h3>
         <p>
-          Example (with math if MathJax is on):
-          “We propose to view the training dynamics as gradient flow on a low-dimensional manifold
-          of effective representations, rather than in the full parameter space:
-          $\\dot{z}_t = -\\nabla_z \\mathcal{L}(z_t)$, where $z_t$ is the representation state.”
+          Due to resource constraints, we were not able to recreate a low-rank version of GPT-3 and
+          instead opted to create a smaller causal language model. Additionally, we evaluated the
+          effectiveness of low-rank projections not only on next-token prediction, but also on
+          image classification by redefining Vision Transformers (ViT) using low-rank projections. 
+        </p>
+        
+        <p>
+          For the causal language model, we used 
         </p>
 
-        <h3 id="theory">3.3 Theoretical observations (optional)</h3>
-        <p>
-          Use this subsection for the more formal claims, lemmas, or intuitions. You can mix light
-          formalism with explanations:
-        </p>
-
-        <blockquote>
-          Under simplifying assumptions (e.g., linearized dynamics, isotropic noise), the representation
-          trajectories follow approximately straight lines in the space of sufficient statistics.
-        </blockquote>
-
-        <pre>
-// Small code example (optional)
-def toy_update(z, grad, lr=0.1):
-    # Simple representation update step
-    return z - lr * grad
-        </pre>
       </section>
 
       <!-- Experiments -->
